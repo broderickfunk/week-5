@@ -18,7 +18,6 @@ g = (
 )
 
 g
-st.write("Was the term 'save the children' accurate for the Titanic? Or just for the higher classes?")
 def visualize_demographic(g):
     groups = g[g["AgeBracket"].isin(["Child", "Adult"])].copy()
 
@@ -35,8 +34,8 @@ def visualize_demographic(g):
         }
     )
     return v
-viz = visualize_demographic(g)
-viz.show()
+fig1 = visualize_demographic(g)
+fig1.show()
 
 #e2
 
@@ -64,6 +63,23 @@ def last_names(df):
 last_name_counts = last_names(df)
 last_name_counts.head(30)
 
-st.write("These findings from the last name counts seem odd to me because if there are 25 passengers with a family size of 7+ then how come only 2 last names have 7+ unique people?")
+avg_fare = (
+    df.groupby("Pclass")
+    .agg(avg_fare=("Fare", "mean"))
+    .reset_index()
+)
+def visualize_families(avg_fare):
+    vi = px.bar(
+        avg_fare,
+        x="Pclass",
+        y="avg_fare",
+    )
+    vi.update_layout(
+    title="Average Fare by Passenger Class",
+    xaxis_title="Passenger Class",
+    yaxis_title="Average Fare"
+)
+    return vi
+fig2 = visualize_families(avg_fare)
+fig2.show()
 
-st.write("How much was first class really on average and how does that compare to the other tickets?")
