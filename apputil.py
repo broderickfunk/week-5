@@ -1,7 +1,7 @@
 import plotly.express as px
 import pandas as pd
+df = pd.read_csv('https://raw.githubusercontent.com/leontoddjohnson/datasets/main/data/titanic.csv')
 def survival_demographics(df):
-    df = pd.read_csv('https://raw.githubusercontent.com/leontoddjohnson/datasets/main/data/titanic.csv')
     df["AgeBracket"] = pd.cut(
     df["Age"],
     bins=[0, 12, 19, 59, 120],
