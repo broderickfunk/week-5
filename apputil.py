@@ -1,27 +1,41 @@
 import plotly.express as px
 import pandas as pd
-df = pd.read_csv('https://raw.githubusercontent.com/leontoddjohnson/datasets/main/data/titanic.csv')
-def survival_demographics(df):
-    df["AgeBracket"] = pd.cut(
-    df["Age"],
-    bins=[0, 12, 19, 59, 120],
-    labels=["Child", "Teen", "Adult", "Senior"]
+
+df = pd.read_csv(
+    "https://raw.githubusercontent.com/leontoddjohnson/datasets/main/data/titanic.csv"
+)
+
+def survival_demographics():
+    df_local = df.copy()
+
+    df_local["AgeBracket"] = pd.cut(
+        df_local["Age"],
+        bins=[0, 12, 19, 59, 120],
+        labels=["Child", "Teen", "Adult", "Senior"]
     )
+
     g = (
-        df.groupby(["Pclass", "Sex", "AgeBracket"], dropna=False, observed=False)
+        df_local.groupby(
+            ["Pclass", "Sex", "AgeBracket"],
+            dropna=False,
+            observed=False
+        )
         .agg(
             n_passengers=("Survived", "size"),
             n_survivors=("Survived", "sum")
         )
         .assign(survival_rate=lambda x: x["n_survivors"] / x["n_passengers"])
         .reset_index()
+        .sort_values(by=["Pclass", "Sex", "AgeBracket"])
+        .reset_index(drop=True)
     )
 
-    g
-survival_demographics(df)
-g.head(30)
+    return g
 
-g
+
+g = survival_demographics()
+print(g.head(30))
+
 def visualize_demographic(g):
     groups = g[g["AgeBracket"].isin(["Child", "Adult"])].copy()
 
@@ -38,6 +52,8 @@ def visualize_demographic(g):
         }
     )
     return v
+
+
 fig1 = visualize_demographic(g)
 fig1.show()
 
